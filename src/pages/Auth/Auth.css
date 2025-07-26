@@ -27,7 +27,25 @@
   border: 1px solid #ccc;
   border-radius: 6px;
 }
-
+.editbox{
+  display: flex;
+  padding: 10px;
+  align-items: center;
+  margin-top: -10px;
+  height: 50px;
+  font-family: 'lale';
+  justify-content: space-between;
+}
+.editbt{
+  border: none;
+  background-color: #fff;
+}
+.editbt:hover{
+  color:  #f6d31f;
+}
+.recode{
+  margin-top: 10px;
+}
 .auth-button {
   width: 100%;
   padding: 12px;
@@ -50,7 +68,6 @@
 .code-box {
   margin-top: 20px;
   padding: 15px;
-  border: 1px solid #ccc;
   border-radius: 8px;
   background-color: #f9f9f9;
 }
