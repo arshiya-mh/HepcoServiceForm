@@ -69,10 +69,18 @@
   margin-top: 20px;
   padding: 15px;
   border-radius: 8px;
-  background-color: #f9f9f9;
 }
 
 .code-text {
   margin-bottom: 10px;
   color: #444;
+  font-family: 'lale';
+}
+.resendcodebt{
+  border: none;
+  background-color: #fff;
+
+}
+.resendcodebt:hover{
+  color: #f6d31f;
 }

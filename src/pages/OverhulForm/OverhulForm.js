@@ -1,9 +1,132 @@
-import './OverhulForm.css'
-function OverhulForm () {
-    return(
+import { useState } from 'react';
+import axios from 'axios';
+import "./OverhulForm.css";
+import Swal from 'sweetalert2';
+import MyNav from "./../../components/MyNav/MyNav";
+import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
+import FloatingLabel from 'react-bootstrap/FloatingLabel';
+import { v4 as uuidv4 } from 'uuid';
+function OverhulForm() {
+    const [formData, setFormData] = useState({
+        companyName: '',
+        machineType: '',
+        chassisNumber: '',
+        description: ''
+    });
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({ ...prev, [name]: value }));
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        try {
+            const response = await axios.post('http://localhost:5000/overhauls', formData);
+            console.log('اطلاعات ذخیره شد:', response.data);
+            Swal.fire({
+                title : 'اطلاعات با موفقیت ثبت شد ' , 
+                text: `کد پیگیری شما : ${uuidv4()}`,
+                icon: "success",
+                draggable: true
+            });
+        } catch (error) {
+            console.error('خطا در ارسال اطلاعات:', error);
+            Swal.fire({
+                icon: "error",
+                title: " خطا در ارسال اطلاعات ",
+                text: " دوباره تلاش کنید ",
+            
+            });
+        }
+    };
+
+    return (
         <>
-        
+            <MyNav />
+            <div className="containeer">
+                <div className="formcontainer">
+                    <Form onSubmit={handleSubmit}>
+                        <Form.Group className="mb-3" style={{ direction: 'rtl' }}>
+                            <Form.Label style={{ fontFamily: 'lale' }}>نام شرکت / شخص</Form.Label>
+                            <Form.Control
+                                type="text"
+                                name="companyName"
+                                value={formData.companyName}
+                                onChange={handleChange}
+                                style={{ fontFamily: 'yekan' }}
+                            />
+                        </Form.Group>
+
+                        <Form.Group className="mb-3">
+                            <Form.Label style={{ fontFamily: 'lale' }}>نوع دستگاه</Form.Label>
+                            <Form.Select
+                                name="machineType"
+                                value={formData.machineType}
+                                onChange={handleChange}
+                                style={{ fontFamily: 'lale' }}
+                            >
+                                <option value="">انتخاب کنید</option>
+                                <option value="لودر HWL 110‑3">لودر HWL 110‑3</option>
+                                <option value="لودر HWL 140">لودر HWL 140</option>
+                                <option value="لودر HWL 160">لودر HWL 160</option>
+                                <option value="لودر بکهولودر 100">لودر بکهولودر 100</option>
+                                <option value="لودر اسکید لودر 350">لودر اسکید لودر 350</option>
+                                <option value="HEC 60">HEC 60 بیل‌های چرخ‌زنجیری</option>
+                                <option value="HEC 220">HEC 220 بیل‌های چرخ‌زنجیری</option>
+                                <option value="HEC 370">HEC 370 بیل‌های چرخ‌زنجیری</option>
+                                <option value="HEC 470">HEC 470 بیل‌های چرخ‌زنجیری</option>
+                                <option value="HEC 750">HEC 750 بیل‌های چرخ‌زنجیری</option>
+                                <option value="HEW 140">HEW 140 بیل چرخ لاستیکی</option>
+                                <option value="HE 100B1">HE 100B1 بیل چرخ لاستیکی</option>
+                                <option value="HC 5">HC 5 غلتک‌</option>
+                                <option value="HC 13B">HC 13B غلتک‌</option>
+                                <option value="HS 78">HS 78 غلتک‌</option>
+                                <option value="HCD 100C">HCD 100C غلتک‌</option>
+                                <option value="HCP 100C">HCP 100C غلتک‌</option>
+                                <option value="HR 105C7">HR 105C7 غلتک‌</option>
+                                <option value="HDZ 42">HDZ 42 بلدوزر</option>
+                                <option value="HG 180 D1">HG 180 D1 گریدر</option>
+                                <option value="HG 180 D3">HG 180 D3 گریدر</option>
+                            </Form.Select>
+                        </Form.Group>
+
+                        <Form.Group className="mb-3">
+                            <Form.Label style={{ fontFamily: 'lale' }}>شماره شاسی</Form.Label>
+                            <Form.Control
+                                type="text"
+                                name="chassisNumber"
+                                value={formData.chassisNumber}
+                                onChange={handleChange}
+                                style={{ fontFamily: 'yekan' }}
+                            />
+                        </Form.Group>
+
+                        <FloatingLabel controlId="floatingTextarea2" label="توضیحات" style={{ fontFamily: 'lale' }}>
+                            <Form.Control
+                                as="textarea"
+                                name="description"
+                                value={formData.description}
+                                onChange={handleChange}
+                                placeholder="توضیحات"
+                                style={{
+                                    minHeight: '100px',
+                                    maxHeight: '200px',
+                                    overflowY: 'auto'
+                                }}
+                            />
+                        </FloatingLabel>
+
+                        <Button variant="warning" type="submit" className="finalsubbt" style={{ fontFamily: 'lale' }}>
+                            تایید اطلاعات
+                        </Button>
+                    </Form>
+                </div>
+            </div>
         </>
-    )
+    );
 }
-export default OverhulForm
+
+export default OverhulForm;

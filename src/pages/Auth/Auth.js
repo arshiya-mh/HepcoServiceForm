@@ -8,6 +8,7 @@ import Swal from 'sweetalert2';
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+
 function Auth() {
     const phoneSchema = Yup.object({
         tel: Yup.string()
@@ -44,6 +45,11 @@ function Auth() {
         const sec = seconds % 60;
         return `${min}:${sec < 10 ? '0' : ''}${sec}`;
     };
+    const handleResend = () => {
+        
+        setIsRunning(true);
+        setTimeLeft(120); 
+    };
     const handleSendClick = (data) => {
         console.log(data)
         setIsCodeVisible(true);
@@ -52,7 +58,7 @@ function Auth() {
     const handleCodeSubmit = () => {
         if (code === '12345') {
             Swal.fire({
-                title: '  کد تایید صحیح است',         
+                title: '  کد تایید صحیح است',
                 icon: 'success',
                 confirmButtonText: 'ادامه',
                 showClass: {
@@ -71,7 +77,7 @@ function Auth() {
                 }
             }).then((result) => {
                 if (result.isConfirmed) {
-                    navigate('/overhulform'); 
+                    navigate('/overhulform');
                 }
             });
 
@@ -81,7 +87,7 @@ function Auth() {
                 title: "کد اشتباه است! ",
                 icon: "error",
                 draggable: 'اصلاح کد ',
-                 confirmButtonText: 'تایید'
+                confirmButtonText: 'تایید'
             });
         }
 
@@ -106,7 +112,7 @@ function Auth() {
                             className="auth-input"
                         />
                         {errors.tel && (
-                            <p className="text-red-500 text-sm mt-1">{errors.tel.message}</p>
+                            <p className="text-red-500 text-sm mt-1" style={{ fontFamily: 'lale' }}>{errors.tel.message}</p>
                         )}
 
                         <button type="submit" className="auth-button">
@@ -128,20 +134,26 @@ function Auth() {
                         />
                         <div className='editbox'>
                             <button className='editbt' onClick={edittel}> ویرایش شماره تماس </button>
-                            {isRunning && (
+                            {isRunning ? (
                                 <p className='recode'> ارسال مجدد کد :
                                     <span style={{ fontWeight: 'bold', marginRight: '5px' }}>
                                         {formatTime(timeLeft)}
                                     </span>
+
                                 </p>
-                            )}
+                            ) : (<button
+                                onClick={handleResend}
+                                className="resendcodebt"
+                            >
+                                ارسال مجدد کد
+                            </button>)}
                         </div>
                         <button onClick={handleCodeSubmit} className="auth-button">
                             تأیید کد
                         </button>
                     </div>
-                )}
 
+                )}
             </div>
         </>
     )
