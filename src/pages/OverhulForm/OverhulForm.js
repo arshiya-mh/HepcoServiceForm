@@ -10,6 +10,9 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import FloatingLabel from 'react-bootstrap/FloatingLabel';
 import './OverhulForm.css';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { FaRegCopy } from "react-icons/fa6";
 
 function OverhulForm() {
 
@@ -20,21 +23,51 @@ function OverhulForm() {
         description: Yup.string().required('توضیحات الزامی است'),
     });
 
-    
+
     const { register, handleSubmit, reset, formState: { errors, isValid } } = useForm({
         resolver: yupResolver(formSchema),
-        mode: 'onChange' 
+        mode: 'onChange'
     });
 
-  
+    const trackingCode = uuidv4();
     const onSubmit = async (data) => {
         try {
             const response = await axios.post('http://localhost:5000/overhauls', data);
             console.log('اطلاعات ذخیره شد:', response.data);
             Swal.fire({
                 title: 'اطلاعات با موفقیت ثبت شد ',
-                text: `کد پیگیری شما : ${uuidv4()}`,
-                icon: "success"
+                html: `
+                <p>کد پیگیری شما:</p>
+                <button id="copy-btn" style="
+                    background-color: #f0ad4e; 
+                    border: none; 
+                    padding: 8px 12px; 
+                    border-radius: 6px; 
+                    cursor: pointer;
+                    font-family: yekan;
+                    font-size: 16px;
+                    margin-top: 10px;
+                ">
+                    ${trackingCode}
+                </button>
+                <p style="font-size: 12px; margin-top: 5px;">روی کد کلیک کنید تا کپی شود</p>
+            `,
+                icon: "success",
+                didOpen: () => {
+                    const btn = document.getElementById('copy-btn');
+                    btn.addEventListener('click', () => {
+                        navigator.clipboard.writeText(trackingCode);
+                        toast.info('کد پیگیری کپی شد ', {
+                            position: 'top-center',
+                            autoClose: 2000,
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            draggable: true,
+                            rtl: true,
+                            icon: <FaRegCopy color='blue' />
+                        })
+                    });
+                }
             });
             reset();
         } catch (error) {
@@ -53,7 +86,7 @@ function OverhulForm() {
             <div className="containeer">
                 <div className="formcontainer">
                     <Form onSubmit={handleSubmit(onSubmit)}>
-             
+
                         <Form.Group className="mb-3" style={{ direction: 'rtl' }}>
                             <Form.Label style={{ fontFamily: 'lale' }}>نام شرکت / شخص</Form.Label>
                             <Form.Control
@@ -64,7 +97,7 @@ function OverhulForm() {
                             {errors.companyName && <p className="error-text">{errors.companyName.message}</p>}
                         </Form.Group>
 
-                
+
                         <Form.Group className="mb-3">
                             <Form.Label style={{ fontFamily: 'lale' }}>نوع دستگاه</Form.Label>
                             <Form.Select
@@ -97,7 +130,7 @@ function OverhulForm() {
                             {errors.machineType && <p className="error-text">{errors.machineType.message}</p>}
                         </Form.Group>
 
-                    
+
                         <Form.Group className="mb-3">
                             <Form.Label style={{ fontFamily: 'lale' }}>شماره شاسی</Form.Label>
                             <Form.Control
@@ -108,7 +141,7 @@ function OverhulForm() {
                             {errors.chassisNumber && <p className="error-text">{errors.chassisNumber.message}</p>}
                         </Form.Group>
 
-                      
+
                         <FloatingLabel controlId="floatingTextarea2" label="توضیحات" style={{ fontFamily: 'lale' }}>
                             <Form.Control
                                 as="textarea"
@@ -123,7 +156,7 @@ function OverhulForm() {
                         </FloatingLabel>
                         {errors.description && <p className="error-text">{errors.description.message}</p>}
 
-                
+
                         <Button
                             variant="warning"
                             type="submit"
@@ -140,6 +173,7 @@ function OverhulForm() {
             <div className="formfooter">
                 <Footer />
             </div>
+             <ToastContainer /> 
         </>
     );
 }
