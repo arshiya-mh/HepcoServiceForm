@@ -10,7 +10,7 @@
   align-items: center;
 }
 .formcontainer{
-    padding: 15px 20px;
+    padding: 15px 90px;
     background-color: #fff;
     border-radius: 5px;
      width: 500px;
@@ -20,9 +20,18 @@
 }
 .finalsubbt{
     width: 200px;
-    margin: 20px 125px;
+    margin: 20px 60px;
 
 }
 .form-control::placeholder{
     font-family: 'lale';
+}
+.formfooter{
+    margin-top: -20px;
+}
+.error-text {
+    color: red;
+    font-family: 'yekan';
+    font-size: 0.9rem;
+    margin-top: 4px;
 }

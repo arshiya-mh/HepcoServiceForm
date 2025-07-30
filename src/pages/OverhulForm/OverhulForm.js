@@ -1,44 +1,48 @@
-import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as Yup from 'yup';
 import axios from 'axios';
-import "./OverhulForm.css";
 import Swal from 'sweetalert2';
+import { v4 as uuidv4 } from 'uuid';
 import MyNav from "./../../components/MyNav/MyNav";
+import Footer from '../../components/Footer/Footer';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import FloatingLabel from 'react-bootstrap/FloatingLabel';
-import { v4 as uuidv4 } from 'uuid';
+import './OverhulForm.css';
+
 function OverhulForm() {
-    const [formData, setFormData] = useState({
-        companyName: '',
-        machineType: '',
-        chassisNumber: '',
-        description: ''
+
+    const formSchema = Yup.object({
+        companyName: Yup.string().required('نام شرکت / شخص الزامی است'),
+        machineType: Yup.string().required('نوع دستگاه الزامی است'),
+        chassisNumber: Yup.string().required('شماره شاسی الزامی است'),
+        description: Yup.string().required('توضیحات الزامی است'),
     });
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, [name]: value }));
-    };
+    
+    const { register, handleSubmit, reset, formState: { errors, isValid } } = useForm({
+        resolver: yupResolver(formSchema),
+        mode: 'onChange' 
+    });
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-
+  
+    const onSubmit = async (data) => {
         try {
-            const response = await axios.post('http://localhost:5000/overhauls', formData);
+            const response = await axios.post('http://localhost:5000/overhauls', data);
             console.log('اطلاعات ذخیره شد:', response.data);
             Swal.fire({
-                title : 'اطلاعات با موفقیت ثبت شد ' , 
+                title: 'اطلاعات با موفقیت ثبت شد ',
                 text: `کد پیگیری شما : ${uuidv4()}`,
-                icon: "success",
-                draggable: true
+                icon: "success"
             });
+            reset();
         } catch (error) {
             console.error('خطا در ارسال اطلاعات:', error);
             Swal.fire({
                 icon: "error",
                 title: " خطا در ارسال اطلاعات ",
                 text: " دوباره تلاش کنید ",
-            
             });
         }
     };
@@ -48,24 +52,23 @@ function OverhulForm() {
             <MyNav />
             <div className="containeer">
                 <div className="formcontainer">
-                    <Form onSubmit={handleSubmit}>
+                    <Form onSubmit={handleSubmit(onSubmit)}>
+             
                         <Form.Group className="mb-3" style={{ direction: 'rtl' }}>
                             <Form.Label style={{ fontFamily: 'lale' }}>نام شرکت / شخص</Form.Label>
                             <Form.Control
                                 type="text"
-                                name="companyName"
-                                value={formData.companyName}
-                                onChange={handleChange}
+                                {...register("companyName")}
                                 style={{ fontFamily: 'yekan' }}
                             />
+                            {errors.companyName && <p className="error-text">{errors.companyName.message}</p>}
                         </Form.Group>
 
+                
                         <Form.Group className="mb-3">
                             <Form.Label style={{ fontFamily: 'lale' }}>نوع دستگاه</Form.Label>
                             <Form.Select
-                                name="machineType"
-                                value={formData.machineType}
-                                onChange={handleChange}
+                                {...register("machineType")}
                                 style={{ fontFamily: 'lale' }}
                             >
                                 <option value="">انتخاب کنید</option>
@@ -91,25 +94,25 @@ function OverhulForm() {
                                 <option value="HG 180 D1">HG 180 D1 گریدر</option>
                                 <option value="HG 180 D3">HG 180 D3 گریدر</option>
                             </Form.Select>
+                            {errors.machineType && <p className="error-text">{errors.machineType.message}</p>}
                         </Form.Group>
 
+                    
                         <Form.Group className="mb-3">
                             <Form.Label style={{ fontFamily: 'lale' }}>شماره شاسی</Form.Label>
                             <Form.Control
                                 type="text"
-                                name="chassisNumber"
-                                value={formData.chassisNumber}
-                                onChange={handleChange}
+                                {...register("chassisNumber")}
                                 style={{ fontFamily: 'yekan' }}
                             />
+                            {errors.chassisNumber && <p className="error-text">{errors.chassisNumber.message}</p>}
                         </Form.Group>
 
+                      
                         <FloatingLabel controlId="floatingTextarea2" label="توضیحات" style={{ fontFamily: 'lale' }}>
                             <Form.Control
                                 as="textarea"
-                                name="description"
-                                value={formData.description}
-                                onChange={handleChange}
+                                {...register("description")}
                                 placeholder="توضیحات"
                                 style={{
                                     minHeight: '100px',
@@ -118,12 +121,24 @@ function OverhulForm() {
                                 }}
                             />
                         </FloatingLabel>
+                        {errors.description && <p className="error-text">{errors.description.message}</p>}
 
-                        <Button variant="warning" type="submit" className="finalsubbt" style={{ fontFamily: 'lale' }}>
+                
+                        <Button
+                            variant="warning"
+                            type="submit"
+                            className="finalsubbt"
+                            disabled={!isValid}
+                            style={{ fontFamily: 'lale', marginTop: '15px' }}
+                        >
                             تایید اطلاعات
                         </Button>
                     </Form>
                 </div>
+            </div>
+
+            <div className="formfooter">
+                <Footer />
             </div>
         </>
     );
